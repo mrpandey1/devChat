@@ -13,16 +13,31 @@ class Register extends React.Component{
     handleChange=event=>{
         this.setState({[event.target.name]:event.target.value})
         };
+    isFormValid=()=>{
+        if(this.isFormEmpty(this.state)){
+
+        }else if(!this.isPasswordValid()){
+
+        }else{
+            return true;
+        }
+    }
+    isFormEmpty=({username,email,password,passwordConfirmation})=>{
+            return !username.length ||!email.length ||!password.length || !passwordConfirmation.length
+    }
 
         handleSubmit=event=>{
-event.preventDefault();
- firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password).then(
-     createdUser=>{
-         console.log(createdUser)
-     }
- ).catch(err=>{
-     console.log(err)
- });
+            if(this.isFormValid()){
+                event.preventDefault();
+                firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password).then(
+                    createdUser=>{
+                        console.log(createdUser)
+                    }
+                ).catch(err=>{
+                    console.log(err)
+                });
+            }
+
         }
 
     render(){
