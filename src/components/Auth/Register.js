@@ -2,6 +2,7 @@ import React from 'react';
 import {Grid,Form,Segment,Button,Header,Message,Icon} from 'semantic-ui-react';
 import {Link } from 'react-router-dom';
 import firebase from '../../firebase';
+import md5 from "md5";
 class Register extends React.Component{
 
     state={
@@ -10,7 +11,8 @@ class Register extends React.Component{
         password:'', 
         passwordConfirmation:'',
         errors:'',
-        loading:false
+        loading:false,
+        usersRef:firebase.database().ref('users')
     }
     handleChange=event=>{
         this.setState({[event.target.name]:event.target.value})
@@ -59,6 +61,9 @@ class Register extends React.Component{
                         displayName:this.state.username,
                         photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
                     }).then(()=>{
+                        this.saveUser(createdUser).then(()=>{
+                            console.log('User Stored')
+                        })
                         this.setState({loading:false});
                     }).catch(err=>{
                         console.log(err);
@@ -70,6 +75,13 @@ class Register extends React.Component{
                 this.setState({errors:this.state.errors.concat(err),loading:false});
             });
         }
+    }
+    saveUser=createdUser=>{
+        return this.state.usersRef.child(createdUser.user.uid)
+        .set({
+            name:createdUser.user.displayName,
+            avatar:createdUser.user.photoURL
+        });
     }
     render(){
         const {loading,username,password,email,passwordConfirmation,errors}=this.state;
