@@ -17,7 +17,7 @@ class Messages extends React.Component {
 
   componentDidMount() {
     const { channel, user } = this.state;
-    console.log(channel);
+
     if (channel && user) {
       this.addListeners(channel.id);
     }
@@ -41,8 +41,6 @@ class Messages extends React.Component {
   displayMessages = messages =>
     messages.length > 0 &&
     messages.map(message => (
-      console.log(message),
-      console.log('hey'),
       <Message
         key={message.timestamp}
         message={message}
@@ -56,11 +54,13 @@ class Messages extends React.Component {
     return (
       <React.Fragment>
         <MessagesHeader />
+
         <Segment>
           <Comment.Group className="messages">
             {this.displayMessages(messages)}
           </Comment.Group>
         </Segment>
+
         <MessageForm
           messagesRef={messagesRef}
           currentChannel={channel}
