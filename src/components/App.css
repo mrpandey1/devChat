@@ -8,7 +8,7 @@ body,
 
 /* Messages.js */
 .messages {
-  height: 410px;
+  height: 400px;
   overflow-y: scroll;
 }
 
