@@ -8,6 +8,7 @@ import Message from "./Message";
 
 class Messages extends React.Component {
   state = {
+    privateChannel:this.props.isPrivateChannel,
     messagesRef: firebase.database().ref("messages"),
     messages: [],
     messagesLoading: true,
@@ -91,7 +92,9 @@ class Messages extends React.Component {
       />
     ));
 
-  displayChannelName = channel => (channel ? `#${channel.name}` : "");
+  displayChannelName = channel => {
+    return channel?`${this.state.privateChannel ? '@' : '#'}${channel.name}`:'';
+  }
 
   render() {
     // prettier-ignore
