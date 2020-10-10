@@ -103,7 +103,7 @@ class DirectMessages extends React.Component {
         </Menu.Item>
         {users.map(user => (
           <Menu.Item
-          active={user.uid==activeChannel}
+          active={user.uid===activeChannel}
             key={user.uid}
             onClick={() => this.changeChannel(user)}
             style={{ opacity: 0.7, fontStyle: "italic" }}
