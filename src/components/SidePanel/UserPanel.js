@@ -8,7 +8,14 @@ class UserPanel extends React.Component {
     modal:false,
     previewImage:'',
     croppedImage:'',
-    blob:''
+    blob:'',
+    storageRef:firebase.storage().ref(),
+    userRef:firebase.auth().currentUser,
+    usersRef:firebase.database().ref('users'),
+    metadata:{
+      contentType:'image/jpeg'
+    },
+    uploadedCroppedImage:'',
   };
   openModal=()=>this.setState({modal:true});
   closeModal=()=>this.setState({modal:false});
@@ -59,6 +66,42 @@ class UserPanel extends React.Component {
           })
         })
       }
+    }
+    uploadCroppedImage=()=>{
+      const {storageRef,userRef,blob,metadata}= this.state
+      storageRef
+      .child(`avatars/user-${userRef.uid}`)
+      .put(blob,metadata)
+      .then(snap=>{
+        snap.ref.getDownloadURL().then(downloadUrl=>{
+          this.setState({uploadedCroppedImage:downloadUrl},()=>
+          this.changeAvatar())
+        })
+      })
+    }
+    changeAvatar=()=>{
+      this.state.userRef
+      .updateProfile({
+        photoURL:this.state.uploadedCroppedImage
+      })
+      .then(()=>{
+        console.log('Updated');
+        this.closeModal();
+      })
+      .catch(err=>{
+        console.error(err);
+      })
+      this.state.usersRef
+      .child(this.state.user.uid)
+      .update({
+        avatar:this.state.uploadedCroppedImage
+      })
+      .then(()=>{
+        console.log('user avatar updated')
+      })
+      .catch(err=>{
+        console.error(err);
+      })
     }
   render() {
     const { user ,modal,previewImage,croppedImage} = this.state;
@@ -125,7 +168,7 @@ class UserPanel extends React.Component {
                   </Grid>
                 </Modal.Content>
                 <Modal.Actions>
-                  {croppedImage && <Button color='green' inverted>
+                  {croppedImage && <Button color='green' inverted onClick={this.uploadCroppedImage}>
                     <Icon name='save'/>Change Avatar
                   </Button>}
                   <Button color='green' inverted onClick={this.handleCropImage}>
