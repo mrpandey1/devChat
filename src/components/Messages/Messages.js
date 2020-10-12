@@ -3,7 +3,7 @@ import { Segment, Comment } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { setUserPosts } from "../../actions";
 import firebase from "../../firebase";
-
+import Skeleton from './Skeleton';
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import Message from "./Message";
@@ -231,10 +231,18 @@ class Messages extends React.Component {
         <span className="user__typing">{user.name} is typing</span> <Typing />
       </div>
     ));
-
+    displayMessagesSkeleton=loading=>(
+      loading?(
+        <React.Fragment>
+          {[...Array(10)].map((_,i)=>(
+            <Skeleton key={i}/>
+          ))}
+        </React.Fragment>
+      ):null
+    )
   render() {
     // prettier-ignore
-    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults, searchLoading, privateChannel, isChannelStarred, typingUsers } = this.state;
+    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults, searchLoading, privateChannel, isChannelStarred, typingUsers ,messagesLoading} = this.state;
 
     return (
       <React.Fragment>
@@ -250,6 +258,7 @@ class Messages extends React.Component {
 
         <Segment>
           <Comment.Group className="messages">
+            {this.displayMessagesSkeleton(messagesLoading)}
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
