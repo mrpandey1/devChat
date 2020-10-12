@@ -31,7 +31,12 @@ class MessageForm extends React.Component {
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
-
+  componentWillUnmount(){
+    if(this.state.uploadTask!==null){
+      this.state.uploadTask.cancel();
+      this.setState({uploadTask:null});
+    }
+  }
   handleKeyDown = event => {
     if(event.ctrlKey && event.keyCode==13){
       this.sendMessage();
@@ -127,7 +132,7 @@ class MessageForm extends React.Component {
 
   getPath = () => {
     if (this.props.isPrivateChannel) {
-      return `chat/private-${this.state.channel.id}`;
+      return `chat/private/${this.state.channel.id}`;
     } else {
       return "chat/public";
     }

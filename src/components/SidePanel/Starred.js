@@ -64,6 +64,13 @@ class Starred extends React.Component {
         # {channel.name}
       </Menu.Item>
     ));
+    componentWillUnmount(){
+      this.removeListeners();
+    }
+
+    removeListeners=()=>{
+      this.state.usersRef.child(`${this.state.user.uid}/starred`).off();
+    }
 
   render() {
     const { starredChannels } = this.state;

@@ -89,7 +89,14 @@ class DirectMessages extends React.Component {
   setActiveChannel=userId=>{
       this.setState({activeChannel:userId});
   }
-
+  componentWillUnmount(){
+    this.removeListeners();
+  }
+  removeListeners=()=>{
+    this.state.usersRef.off();
+    this.state.presenceRef.off();
+    this.state.connectedRef.off();
+  }
   render() {
     const { users,activeChannel } = this.state;
 

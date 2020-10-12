@@ -3,11 +3,12 @@ import { Segment, Comment } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { setUserPosts } from "../../actions";
 import firebase from "../../firebase";
-import Skeleton from './Skeleton';
+
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import Message from "./Message";
 import Typing from "./Typing";
+import Skeleton from "./Skeleton";
 
 class Messages extends React.Component {
   state = {
@@ -26,25 +27,53 @@ class Messages extends React.Component {
     searchResults: [],
     typingRef: firebase.database().ref("typing"),
     typingUsers: [],
-    connectedRef: firebase.database().ref(".info/connected")
+    connectedRef: firebase.database().ref(".info/connected"),
+    listeners: []
   };
 
   componentDidMount() {
-    const { channel, user } = this.state;
+    const { channel, user, listeners } = this.state;
 
     if (channel && user) {
+      this.removeListeners(listeners);
       this.addListeners(channel.id);
       this.addUserStarsListener(channel.id, user.uid);
     }
   }
-  componentDidUpdate(prevProps,prevState){
-    if(this.messagesEnd){
+
+  componentWillUnmount() {
+    this.removeListeners(this.state.listeners);
+    this.state.connectedRef.off();
+  }
+
+  removeListeners = listeners => {
+    listeners.forEach(listener => {
+      listener.ref.child(listener.id).off(listener.event);
+    });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.messagesEnd) {
       this.scrollToBottom();
     }
   }
-  scrollToBottom=()=>{
-    this.messagesEnd.scrollIntoView({behavior:'smooth'});
-  }
+
+  addToListeners = (id, ref, event) => {
+    const index = this.state.listeners.findIndex(listener => {
+      return (
+        listener.id === id && listener.ref === ref && listener.event === event
+      );
+    });
+
+    if (index === -1) {
+      const newListener = { id, ref, event };
+      this.setState({ listeners: this.state.listeners.concat(newListener) });
+    }
+  };
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+  };
 
   addListeners = channelId => {
     this.addMessageListener(channelId);
@@ -62,6 +91,7 @@ class Messages extends React.Component {
         this.setState({ typingUsers });
       }
     });
+    this.addToListeners(channelId, this.state.typingRef, "child_added");
 
     this.state.typingRef.child(channelId).on("child_removed", snap => {
       const index = typingUsers.findIndex(user => user.id === snap.key);
@@ -70,6 +100,7 @@ class Messages extends React.Component {
         this.setState({ typingUsers });
       }
     });
+    this.addToListeners(channelId, this.state.typingRef, "child_removed");
 
     this.state.connectedRef.on("value", snap => {
       if (snap.val() === true) {
@@ -98,6 +129,7 @@ class Messages extends React.Component {
       this.countUniqueUsers(loadedMessages);
       this.countUserPosts(loadedMessages);
     });
+    this.addToListeners(channelId, ref, "child_added");
   };
 
   addUserStarsListener = (channelId, userId) => {
@@ -231,18 +263,19 @@ class Messages extends React.Component {
         <span className="user__typing">{user.name} is typing</span> <Typing />
       </div>
     ));
-    displayMessagesSkeleton=loading=>(
-      loading?(
-        <React.Fragment>
-          {[...Array(10)].map((_,i)=>(
-            <Skeleton key={i}/>
-          ))}
-        </React.Fragment>
-      ):null
-    )
+
+  displayMessageSkeleton = loading =>
+    loading ? (
+      <React.Fragment>
+        {[...Array(10)].map((_, i) => (
+          <Skeleton key={i} />
+        ))}
+      </React.Fragment>
+    ) : null;
+
   render() {
     // prettier-ignore
-    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults, searchLoading, privateChannel, isChannelStarred, typingUsers ,messagesLoading} = this.state;
+    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults, searchLoading, privateChannel, isChannelStarred, typingUsers, messagesLoading } = this.state;
 
     return (
       <React.Fragment>
@@ -258,12 +291,12 @@ class Messages extends React.Component {
 
         <Segment>
           <Comment.Group className="messages">
-            {this.displayMessagesSkeleton(messagesLoading)}
+            {this.displayMessageSkeleton(messagesLoading)}
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
             {this.displayTypingUsers(typingUsers)}
-            <div ref={node=>{this.messagesEnd=node}}></div>
+            <div ref={node => (this.messagesEnd = node)} />
           </Comment.Group>
         </Segment>
 
