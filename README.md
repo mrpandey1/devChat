@@ -35,7 +35,7 @@
   <br>
 
 ### Adding Channels
-  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/addingChannels.png" width="90%" />
+  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/addChannel.png" width="90%" />
   <br>
 
 ### Starring Channels
