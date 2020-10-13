@@ -265,7 +265,7 @@ class Messages extends React.Component {
     ));
 
   displayMessageSkeleton = loading =>
-    loading ? (
+    loading && !this.state.privateChannel ? (
       <React.Fragment>
         {[...Array(10)].map((_, i) => (
           <Skeleton key={i} />
@@ -291,7 +291,9 @@ class Messages extends React.Component {
 
         <Segment>
           <Comment.Group className="messages">
-            {this.displayMessageSkeleton(messagesLoading)}
+            {
+            this.displayMessageSkeleton(messagesLoading)
+            }
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
