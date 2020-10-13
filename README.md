@@ -27,9 +27,21 @@
   <br>
 
 ### Color Panel
-  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/ChangeColor.png" width="90%" />
+  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/changeColor.png" width="90%" />
   <br>
 
 ### Change Avatar
   <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/changeAvatar.png" width="90%" />
+  <br>
+
+### Adding Channels
+  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/addingChannels.png" width="90%" />
+  <br>
+
+### Starring Channels
+  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/starring.png" width="90%" />
+  <br>
+
+### Starred Channels
+  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/starred.png" width="90%" />
   <br>
