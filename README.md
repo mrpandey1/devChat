@@ -2,10 +2,6 @@
 
 ## Screenshots
 
-### Login
-  <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/login.png" width="90%" />
-  <br>
-
 ### Home
   <img src="https://github.com/mrpandey1/devChat/blob/master/screenshots/home.png" width="90%" />
   <br>
